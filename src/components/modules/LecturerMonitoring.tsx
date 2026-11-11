@@ -18,7 +18,7 @@ import {
 
 export const LecturerMonitoring: React.FC = () => {
   const { profile, products, orders, defects, updateProduct, setActiveTab } = useUmkm();
-  const { access } = useAuth();
+  const { access, logout } = useAuth();
 
   // PIN Protection State
   const [isUnlocked, setIsUnlocked] = useState(true);
@@ -248,6 +248,13 @@ export const LecturerMonitoring: React.FC = () => {
           >
             Buka Portal Monitoring
           </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('hpp')}
+            className="w-full py-2 bg-canvas border border-hairline text-body hover:text-ink rounded-full text-xs font-semibold hover:bg-neutral-1"
+          >
+            Kembali ke Aplikasi UMKM
+          </button>
         </form>
       </div>
     );
@@ -308,6 +315,16 @@ export const LecturerMonitoring: React.FC = () => {
           >
             <i className="fa-solid fa-arrow-left text-xs"></i>
             <span>Tampilan UMKM</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={logout}
+            className="px-3.5 py-2 bg-canvas hover:bg-neutral-1 text-body hover:text-danger-text border border-hairline rounded-full text-xs font-semibold flex items-center gap-1.5 shadow-micro"
+            title="Keluar dari akun dan kembali ke halaman login"
+          >
+            <i className="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+            <span>Keluar ke Login</span>
           </button>
         </div>
       </div>

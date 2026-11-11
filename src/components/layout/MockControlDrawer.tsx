@@ -19,7 +19,7 @@ export const MockControlDrawer: React.FC<MockControlDrawerProps> = ({ isOpen, on
     activeTab,
     setActiveTab,
   } = useUmkm();
-  const { access } = useAuth();
+  const { access, logout, isGuest } = useAuth();
 
   const [confirmReset, setConfirmReset] = useState(false);
 
@@ -202,7 +202,7 @@ export const MockControlDrawer: React.FC<MockControlDrawerProps> = ({ isOpen, on
         </div>
 
         {/* Footer Actions */}
-        <div className="p-4 border-t border-hairline bg-neutral-1 flex justify-between items-center">
+        <div className="p-4 border-t border-hairline bg-neutral-1 flex justify-between items-center gap-2">
           {confirmReset ? (
             <div className="flex items-center gap-1.5">
               <span className="text-[11px] font-bold text-danger-text">Yakin reset?</span>
@@ -232,16 +232,32 @@ export const MockControlDrawer: React.FC<MockControlDrawerProps> = ({ isOpen, on
               className="text-xs text-muted hover:text-danger-text font-semibold flex items-center gap-1.5"
             >
               <i className="fa-solid fa-rotate-left text-[11px]"></i>
-              <span>Reset Data Contoh</span>
+              <span>Reset Data</span>
             </button>
           )}
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-1.5 bg-ink text-white rounded-full text-xs font-bold hover:bg-body shadow-micro"
-          >
-            Tutup
-          </button>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                logout();
+              }}
+              className="px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-full text-xs font-bold transition-colors flex items-center gap-1"
+              title="Kembali ke Halaman Login"
+            >
+              <i className="fa-solid fa-arrow-right-to-bracket text-[10px]"></i>
+              <span>Halaman Login</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-3.5 py-1.5 bg-ink text-white rounded-full text-xs font-bold hover:bg-body shadow-micro"
+            >
+              Tutup
+            </button>
+          </div>
         </div>
       </div>
     </div>

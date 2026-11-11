@@ -32,7 +32,7 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
   onBack,
   onOpenClassroomMonitor,
 }) => {
-  const { user, access } = useAuth();
+  const { user, access, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<'users' | 'admins' | 'audit' | 'classroom'>('users');
   const [usersList, setUsersList] = useState<UserProfile[]>([]);
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([]);
@@ -220,16 +220,26 @@ export const AdminConsole: React.FC<AdminConsoleProps> = ({
           </p>
         </div>
 
-        {/* Classroom Quick Launcher */}
-        {onOpenClassroomMonitor && (
+        {/* Classroom Quick Launcher & Logout */}
+        <div className="flex items-center gap-2">
+          {onOpenClassroomMonitor && (
+            <button
+              onClick={onOpenClassroomMonitor}
+              className="px-3.5 py-2 bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold rounded-lg shadow-sm transition-colors flex items-center gap-2"
+            >
+              <i className="fa-solid fa-chalkboard-user"></i>
+              <span>Layar Dosen</span>
+            </button>
+          )}
           <button
-            onClick={onOpenClassroomMonitor}
-            className="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold rounded-lg shadow-sm transition-colors flex items-center gap-2"
+            onClick={logout}
+            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5"
+            title="Keluar dari sesi Admin"
           >
-            <i className="fa-solid fa-chalkboard-user"></i>
-            <span>Buka Layar Proyektor Dosen</span>
+            <i className="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+            <span>Keluar</span>
           </button>
-        )}
+        </div>
       </div>
 
       {/* Action Feedback Toast */}

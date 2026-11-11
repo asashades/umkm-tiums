@@ -90,6 +90,29 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMockDrawer }) => {
             <span className="hidden sm:inline">Uji</span>
             <span>Mock</span>
           </button>
+
+          {/* Tombol Login / Keluar Akun */}
+          {isGuest ? (
+            <button
+              type="button"
+              onClick={logout}
+              className="bg-white text-primary text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-full shadow-micro flex items-center gap-1 hover:bg-neutral-1 transition-colors"
+              title="Kembali ke Halaman Login untuk masuk dengan Google"
+            >
+              <i className="fa-solid fa-arrow-right-to-bracket text-[10px]"></i>
+              <span>Login</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={logout}
+              className="bg-white/10 hover:bg-white/20 text-white text-[11px] sm:text-xs font-semibold px-2.5 py-1.5 rounded-full border border-white/20 flex items-center gap-1 transition-colors"
+              title={`Keluar (${user?.email || 'Akun'})`}
+            >
+              <i className="fa-solid fa-arrow-right-from-bracket text-[10px]"></i>
+              <span className="hidden sm:inline">Keluar</span>
+            </button>
+          )}
         </div>
       </div>
     </header>

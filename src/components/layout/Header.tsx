@@ -81,36 +81,26 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMockDrawer }) => {
             )
           )}
 
-          <button
-            type="button"
-            onClick={onOpenMockDrawer}
-            className="bg-badge-gold text-ink text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-full shadow-micro flex items-center gap-1 hover:opacity-95 transition-opacity"
-          >
-            <i className="fa-solid fa-flask text-[10px]"></i>
-            <span className="hidden sm:inline">Uji</span>
-            <span>Mock</span>
-          </button>
-
-          {/* Tombol Login / Keluar Akun */}
+          {/* Tombol Login / Keluar Akun Tunggal */}
           {isGuest ? (
             <button
               type="button"
               onClick={logout}
-              className="bg-white text-primary text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-full shadow-micro flex items-center gap-1 hover:bg-neutral-1 transition-colors"
-              title="Kembali ke Halaman Login untuk masuk dengan Google"
+              className="bg-white text-primary text-xs font-bold px-3 py-1.5 rounded-full shadow-micro flex items-center gap-1.5 hover:bg-neutral-1 transition-colors"
+              title="Kembali ke Halaman Login Google"
             >
-              <i className="fa-solid fa-arrow-right-to-bracket text-[10px]"></i>
+              <i className="fa-solid fa-arrow-right-to-bracket text-xs"></i>
               <span>Login</span>
             </button>
           ) : (
             <button
               type="button"
               onClick={logout}
-              className="bg-white/10 hover:bg-white/20 text-white text-[11px] sm:text-xs font-semibold px-2.5 py-1.5 rounded-full border border-white/20 flex items-center gap-1 transition-colors"
+              className="bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-3 py-1.5 rounded-full border border-white/20 flex items-center gap-1.5 transition-colors"
               title={`Keluar (${user?.email || 'Akun'})`}
             >
-              <i className="fa-solid fa-arrow-right-from-bracket text-[10px]"></i>
-              <span className="hidden sm:inline">Keluar</span>
+              <i className="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+              <span>Keluar</span>
             </button>
           )}
         </div>

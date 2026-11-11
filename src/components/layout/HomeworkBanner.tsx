@@ -1,10 +1,8 @@
 import React from 'react';
 import { useUmkm } from '../../context/UmkmContext';
-import { useAuth } from '../../context/AuthContext';
 
 export const HomeworkBanner: React.FC = () => {
   const { profile, products, orders, defects, setActiveTab, toggleTrainingMode } = useUmkm();
-  const { isGuest, logout } = useAuth();
 
   if (!profile.trainingModeEnabled) {
     return null;
@@ -42,30 +40,15 @@ export const HomeworkBanner: React.FC = () => {
             </span>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
-            {isGuest && (
-              <button
-                type="button"
-                onClick={logout}
-                className="text-[11px] text-primary hover:underline font-bold flex items-center gap-1"
-                title="Keluar dari sesi pelatihan dan kembali ke login Google"
-              >
-                <i className="fa-solid fa-arrow-right-to-bracket text-[10px]"></i>
-                <span className="hidden sm:inline">Halaman</span>
-                <span>Login</span>
-              </button>
-            )}
-
-            <button
-              type="button"
-              onClick={toggleTrainingMode}
-              className="text-[11px] text-muted hover:text-ink font-semibold flex items-center gap-1"
-              title="Sembunyikan panel tugas"
-            >
-              <i className="fa-solid fa-eye-slash text-[10px]"></i>
-              <span className="hidden sm:inline">Sembunyikan</span>
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={toggleTrainingMode}
+            className="text-[11px] text-muted hover:text-ink font-semibold flex items-center gap-1 shrink-0"
+            title="Sembunyikan panel tugas"
+          >
+            <i className="fa-solid fa-eye-slash text-[10px]"></i>
+            <span className="hidden sm:inline">Sembunyikan</span>
+          </button>
         </div>
 
         {/* 3 Clean Simplified Cards */}

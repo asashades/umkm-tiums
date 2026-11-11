@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useUmkm, MockPersona } from '../../context/UmkmContext';
+import { useAuth } from '../../context/AuthContext';
 
 interface MockControlDrawerProps {
   isOpen: boolean;
@@ -18,6 +19,7 @@ export const MockControlDrawer: React.FC<MockControlDrawerProps> = ({ isOpen, on
     activeTab,
     setActiveTab,
   } = useUmkm();
+  const { access } = useAuth();
 
   const [confirmReset, setConfirmReset] = useState(false);
 
@@ -160,29 +162,31 @@ export const MockControlDrawer: React.FC<MockControlDrawerProps> = ({ isOpen, on
               </div>
             </div>
 
-            {/* 4. Portal Dosen Button */}
-            <div className="border-t border-hairline pt-4 space-y-2">
-              <label className="block text-[10px] font-bold text-ink uppercase tracking-wider">
-                Akses Khusus Tim Dosen (SNH, ASA, PSN)
-              </label>
-              <button
-                onClick={() => {
-                  setActiveTab('monitoring');
-                  onClose();
-                }}
-                className={`w-full py-2.5 px-3 rounded-sm border text-xs font-bold flex items-center justify-center gap-2 transition-colors ${
-                  activeTab === 'monitoring'
-                    ? 'bg-primary text-white border-primary'
-                    : 'bg-white text-ink border-neutral-2 hover:bg-neutral-1'
-                }`}
-              >
-                <i className="fa-solid fa-chalkboard-user"></i>
-                <span>Buka Dashboard Monitoring (/monitoring)</span>
-              </button>
-              <p className="text-[11px] text-muted leading-relaxed">
-                Menampilkan rekapitulasi 35 UMKM kelas Jepara, bedah kasus HPP di proyektor, dan ekspor CSV.
-              </p>
-            </div>
+            {/* 4. Portal Dosen Button (Khusus Admin / Superadmin) */}
+            {access.isAdmin && (
+              <div className="border-t border-hairline pt-4 space-y-2">
+                <label className="block text-[10px] font-bold text-ink uppercase tracking-wider">
+                  Akses Khusus Tim Dosen (SNH, ASA, PSN)
+                </label>
+                <button
+                  onClick={() => {
+                    setActiveTab('monitoring');
+                    onClose();
+                  }}
+                  className={`w-full py-2.5 px-3 rounded-sm border text-xs font-bold flex items-center justify-center gap-2 transition-colors ${
+                    activeTab === 'monitoring'
+                      ? 'bg-primary text-white border-primary'
+                      : 'bg-white text-ink border-neutral-2 hover:bg-neutral-1'
+                  }`}
+                >
+                  <i className="fa-solid fa-chalkboard-user"></i>
+                  <span>Buka Dashboard Monitoring (/monitoring)</span>
+                </button>
+                <p className="text-[11px] text-muted leading-relaxed">
+                  Menampilkan rekapitulasi 35 UMKM kelas Jepara, bedah kasus HPP di proyektor, dan ekspor CSV.
+                </p>
+              </div>
+            )}
 
             {/* 5. Live Dual-Sync Info */}
             <div className="border-t border-hairline pt-4">

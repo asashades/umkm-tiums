@@ -19,6 +19,7 @@ import { LecturerMonitoring } from './components/modules/LecturerMonitoring';
 
 const MainAppContent: React.FC = () => {
   const { activeTab, setActiveTab, isHpViewport, setIsHpViewport } = useUmkm();
+  const { access } = useAuth();
   const [isMockDrawerOpen, setIsMockDrawerOpen] = useState(false);
 
   const renderActiveModule = () => {
@@ -34,8 +35,16 @@ const MainAppContent: React.FC = () => {
       case 'profile':
         return <ProfileModule />;
       case 'monitoring':
+        // Hanya dapat diakses oleh Superadmin atau Admin yang ditugaskan
+        if (!access.isAdmin) {
+          return <HppModule />;
+        }
         return <LecturerMonitoring />;
       case 'admin':
+        // Hanya dapat diakses oleh Superadmin atau Admin yang ditugaskan
+        if (!access.isAdmin) {
+          return <HppModule />;
+        }
         return (
           <AdminConsole
             onBack={() => setActiveTab('hpp')}

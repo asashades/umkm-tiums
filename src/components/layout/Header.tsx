@@ -55,26 +55,30 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMockDrawer }) => {
             )
           )}
 
-          {activeTab === 'monitoring' ? (
-            <button
-              type="button"
-              onClick={() => setActiveTab('hpp')}
-              className="bg-white text-primary text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-full shadow-micro flex items-center gap-1 hover:bg-neutral-1 transition-colors"
-            >
-              <i className="fa-solid fa-arrow-left text-[10px]"></i>
-              <span className="hidden sm:inline">Kembali ke</span>
-              <span>UMKM</span>
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setActiveTab('monitoring')}
-              className="bg-white/10 hover:bg-white/20 text-white text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-full border border-white/20 flex items-center gap-1 transition-colors"
-            >
-              <i className="fa-solid fa-chalkboard-user text-[10px]"></i>
-              <span className="hidden sm:inline">Portal</span>
-              <span>Dosen</span>
-            </button>
+          {/* Portal Dosen Button (Hanya tampil untuk Superadmin & Admin yang ditugaskan) */}
+          {access.isAdmin && (
+            activeTab === 'monitoring' ? (
+              <button
+                type="button"
+                onClick={() => setActiveTab('hpp')}
+                className="bg-white text-primary text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-full shadow-micro flex items-center gap-1 hover:bg-neutral-1 transition-colors"
+              >
+                <i className="fa-solid fa-arrow-left text-[10px]"></i>
+                <span className="hidden sm:inline">Kembali ke</span>
+                <span>UMKM</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setActiveTab('monitoring')}
+                className="bg-white/10 hover:bg-white/20 text-white text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-full border border-white/20 flex items-center gap-1 transition-colors"
+                title="Buka Portal Dosen & Proyektor"
+              >
+                <i className="fa-solid fa-chalkboard-user text-[10px]"></i>
+                <span className="hidden sm:inline">Portal</span>
+                <span>Dosen</span>
+              </button>
+            )
           )}
 
           <button

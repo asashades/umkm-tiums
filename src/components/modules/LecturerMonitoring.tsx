@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useUmkm } from '../../context/UmkmContext';
+import { useAuth } from '../../context/AuthContext';
+import { SUPERADMIN_EMAIL } from '../../config/accessControl';
 import { MockParticipantSummary, Product } from '../../types/titan';
 import { MOCK_CLASS_PARTICIPANTS, PRODUCTS_MEBEL, PRODUCTS_FNB } from '../../config/mockSeedData';
 import {
@@ -16,6 +18,7 @@ import {
 
 export const LecturerMonitoring: React.FC = () => {
   const { profile, products, orders, defects, updateProduct, setActiveTab } = useUmkm();
+  const { access } = useAuth();
 
   // PIN Protection State
   const [isUnlocked, setIsUnlocked] = useState(true);
@@ -191,6 +194,28 @@ export const LecturerMonitoring: React.FC = () => {
       setSimRiskBuffer(resolvedProd.defectRiskPercent || 5);
     }
   };
+
+  // Guard: Hanya Superadmin (asa482@ums.ac.id) atau Admin yang ditugaskan yang dapat mengakses
+  if (!access.isAdmin) {
+    return (
+      <div className="p-8 text-center bg-white border border-slate-200 rounded-xl max-w-lg mx-auto my-12 shadow-sm">
+        <div className="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-3">
+          <i className="fa-solid fa-lock text-xl"></i>
+        </div>
+        <h2 className="text-base font-bold text-slate-900">Akses Khusus Dosen & Administrator</h2>
+        <p className="text-xs text-slate-600 mt-1 mb-4">
+          Portal Monitoring Kelas ini hanya dapat diakses oleh Dosen ({SUPERADMIN_EMAIL}) atau Administrator yang telah ditugaskan oleh Superadmin. Peserta pelatihan menginput data melalui modul HPP, Pesanan, dan QC.
+        </p>
+        <button
+          type="button"
+          onClick={() => setActiveTab('hpp')}
+          className="px-4 py-2 bg-slate-900 text-white text-xs font-semibold rounded-lg hover:bg-slate-800 transition-colors"
+        >
+          Kembali ke Aplikasi UMKM
+        </button>
+      </div>
+    );
+  }
 
   if (!isUnlocked) {
     return (

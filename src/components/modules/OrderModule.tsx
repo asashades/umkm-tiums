@@ -518,9 +518,6 @@ export const OrderModule: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-lg sm:text-2xl font-extrabold text-ink tracking-tight">Manajemen Pesanan & Nota WA</h2>
-          <p className="text-xs text-muted mt-0.5">
-            Lacak tahapan pesanan multi-item, uang muka (DP), piutang, dan kirim nota WhatsApp 1-klik.
-          </p>
         </div>
 
         <button
@@ -717,20 +714,20 @@ export const OrderModule: React.FC = () => {
                 {/* Interactive Stage Stepper Pills */}
                 <div className="space-y-1.5 pt-1">
                   <div className="flex items-center justify-between text-[10px] font-bold text-ink uppercase tracking-wider">
-                    <span>Tahapan Produksi (Klik untuk Ubah):</span>
+                    <span>Tahap Produksi</span>
                     {order.stage !== 'Dibatalkan' ? (
                       <button
                         type="button"
                         onClick={() => updateOrderStage(order.id, 'Dibatalkan')}
-                        className="text-muted hover:text-danger-text font-semibold normal-case"
+                        className="text-muted hover:text-danger-text font-normal normal-case text-[10px]"
                       >
-                        Batalkan Pesanan
+                        Batalkan
                       </button>
                     ) : (
-                      <span className="text-danger-text font-extrabold">PESANAN DIBATALKAN</span>
+                      <span className="text-danger-text font-bold">Dibatalkan</span>
                     )}
                   </div>
-                  <div className="flex flex-wrap items-center gap-1.5">
+                  <div className="flex items-center gap-1 overflow-x-auto pb-1 text-[10px]">
                     {ORDER_STAGES.map((st, idx) => {
                       const isCurrent = order.stage === st;
                       const currentIdx = ORDER_STAGES.indexOf(order.stage);
@@ -740,19 +737,15 @@ export const OrderModule: React.FC = () => {
                           key={st}
                           type="button"
                           onClick={() => handleStageClick(order, st)}
-                          className={`px-2.5 py-1 rounded-full text-[11px] font-bold border transition-all flex items-center gap-1 ${
+                          className={`px-2 py-0.5 rounded-full font-bold border transition-all whitespace-nowrap flex items-center gap-1 shrink-0 ${
                             isCurrent
                               ? 'bg-primary text-white border-primary shadow-micro'
                               : isPassed
-                              ? 'bg-primary/10 text-primary border-primary/30'
-                              : 'bg-neutral-1 text-body border-hairline hover:border-neutral-2'
+                              ? 'bg-primary/10 text-primary border-primary/20'
+                              : 'bg-neutral-1 text-muted border-hairline hover:text-ink'
                           }`}
                         >
-                          {isPassed ? (
-                            <i className="fa-solid fa-check text-[9px]"></i>
-                          ) : (
-                            <span className="text-[10px] opacity-75">{idx + 1}.</span>
-                          )}
+                          {isPassed && <i className="fa-solid fa-check text-[8px]"></i>}
                           <span>{st}</span>
                         </button>
                       );
@@ -817,16 +810,15 @@ export const OrderModule: React.FC = () => {
                   if (orderContracts.length === 0) return null;
 
                   return (
-                    <div className="bg-neutral-1/90 p-2.5 rounded-sm border border-hairline flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-                      <div className="flex items-center flex-wrap gap-2">
+                    <div className="bg-neutral-1/90 p-2 rounded-sm border border-hairline flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs">
+                      <div className="flex items-center flex-wrap gap-1.5">
                         <i className="fa-solid fa-person-digging text-primary text-xs"></i>
-                        <span className="font-bold text-ink">Borongan Tukang:</span>
+                        <span className="font-bold text-ink">Borongan:</span>
                         <span className="text-muted">
-                          Riil: <strong className="text-ink">{formatRupiah(varianceInfo.actualLabor)}</strong> vs Standar:{' '}
-                          <strong className="text-ink">{formatRupiah(varianceInfo.standardLabor)}</strong>
+                          Riil {formatRupiah(varianceInfo.actualLabor)} vs Std {formatRupiah(varianceInfo.standardLabor)}
                         </span>
                         <span
-                          className={`font-black px-1.5 py-0.5 rounded text-[10px] ${
+                          className={`font-black px-1.5 py-0.2 rounded text-[10px] ${
                             varianceInfo.actualLabor <= varianceInfo.standardLabor
                               ? 'bg-emerald-100 text-emerald-800'
                               : 'bg-red-100 text-red-800'
@@ -844,19 +836,18 @@ export const OrderModule: React.FC = () => {
                           toggleOrderLaborFullyTracked(order.id);
                           showNotice(
                             !order.laborFullyTracked
-                              ? `Selisih upah borongan riil diaktifkan untuk menghitung Laba Bersih Pesanan ${order.orderNumber}.`
-                              : `Perhitungan upah pesanan ${order.orderNumber} kembali ke standar HPP.`
+                              ? `Selisih borongan riil dihitung ke laba order.`
+                              : `Perhitungan upah kembali ke standar HPP.`
                           );
                         }}
-                        className={`text-[11px] font-bold px-2.5 py-1 rounded-full border transition-all flex items-center gap-1.5 shrink-0 ${
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full border transition-all flex items-center gap-1 shrink-0 ${
                           order.laborFullyTracked
                             ? 'bg-primary text-white border-primary shadow-micro'
                             : 'bg-canvas text-body border-hairline hover:border-neutral-2'
                         }`}
-                        title="Jika aktif, selisih borongan riil vs HPP langsung menambah/mengurangi laba riil pesanan"
                       >
-                        <i className={order.laborFullyTracked ? 'fa-solid fa-check text-[10px]' : 'fa-regular fa-square text-[10px]'}></i>
-                        <span>Hitung Selisih ke Laba Bersih</span>
+                        <i className={order.laborFullyTracked ? 'fa-solid fa-check text-[9px]' : 'fa-regular fa-square text-[9px]'}></i>
+                        <span>Hitung ke Laba</span>
                       </button>
                     </div>
                   );
@@ -869,7 +860,7 @@ export const OrderModule: React.FC = () => {
                     Deadline: <strong className="text-ink">{order.dueDate}</strong>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-1.5">
                     {/* Quick Button: Catat Bayar / Pelunasan */}
                     {fin.remainingReceivable > 0 ? (
                       <button
@@ -878,12 +869,12 @@ export const OrderModule: React.FC = () => {
                         className="px-2.5 py-1 text-[11px] font-bold text-primary bg-primary/5 hover:bg-primary/10 rounded-sm border border-primary/30 flex items-center gap-1"
                       >
                         <i className="fa-solid fa-money-bill-wave text-[10px]"></i>
-                        <span>+ Catat Bayar / Lunas</span>
+                        <span>+ Bayar</span>
                       </button>
                     ) : (
-                      <span className="text-[11px] font-bold text-primary flex items-center gap-1 px-2 py-0.5">
+                      <span className="text-[11px] font-bold text-primary flex items-center gap-1 px-1.5">
                         <i className="fa-solid fa-circle-check text-xs"></i>
-                        <span>Lunas Penuh</span>
+                        <span>Lunas</span>
                       </span>
                     )}
 
@@ -893,11 +884,11 @@ export const OrderModule: React.FC = () => {
                       onClick={() => {
                         triggerDefectFromOrder(order.id, order.items[0]?.productId || '');
                       }}
-                      className="px-2.5 py-1 text-[11px] font-bold text-danger-text hover:bg-danger-subtle rounded-sm border border-danger-text/30 flex items-center gap-1"
-                      title="Catat jika terjadi pengerjaan ulang / cacat pada pesanan ini"
+                      className="px-2 py-1 text-[11px] font-bold text-muted hover:text-danger-text rounded-sm border border-hairline hover:border-danger-text/30 flex items-center gap-1"
+                      title="Catat cacat / pengerjaan ulang pesanan ini"
                     >
                       <i className="fa-solid fa-bug text-[10px]"></i>
-                      <span>Catat Cacat</span>
+                      <span>Cacat</span>
                     </button>
 
                     {/* WhatsApp Invoice Button */}
@@ -907,7 +898,7 @@ export const OrderModule: React.FC = () => {
                       className="px-3 py-1 text-[11px] font-bold text-white bg-primary hover:bg-primary-hover rounded-full shadow-micro flex items-center gap-1.5"
                     >
                       <i className="fa-brands fa-whatsapp text-xs"></i>
-                      <span>Kirim WhatsApp</span>
+                      <span>Kirim WA</span>
                     </button>
                   </div>
                 </div>

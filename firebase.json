@@ -3,6 +3,7 @@
     "rules": "firestore.rules"
   },
   "hosting": {
+    "site": "umkm-tiums",
     "public": "dist",
     "ignore": [
       "firebase.json",

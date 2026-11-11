@@ -102,11 +102,8 @@ Sisa Upah Pekerjaan Ini: ${formatRupiah(s.remaining)} (${contract.qcPassedAt ? '
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h3 className="text-base sm:text-lg font-extrabold text-ink tracking-tight">
-            Upah Borongan & Kasbon Tukang Kayu
+            Upah Borongan & Kasbon Tukang
           </h3>
-          <p className="text-xs text-muted mt-0.5">
-            Lacak kasbon berkala, kendalikan risiko over-kasbon sebelum lolos QC, dan pantau selisih upah riil vs HPP.
-          </p>
         </div>
 
         <button

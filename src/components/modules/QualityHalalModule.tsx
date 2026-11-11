@@ -158,11 +158,8 @@ export const QualityHalalModule: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-lg sm:text-2xl font-extrabold text-ink tracking-tight">
-            Kendali Mutu, Cacat (COPQ) & Halal
+            Kendali Mutu, Cacat & Halal
           </h2>
-          <p className="text-xs text-muted mt-0.5">
-            Catat kebocoran biaya cacat produksi serta audit kesiapan titik kritis halal & SOP harian.
-          </p>
         </div>
 
         {activeSubTab === 'defects' && (
@@ -218,22 +215,22 @@ export const QualityHalalModule: React.FC = () => {
           <div className="bg-canvas border border-hairline rounded-md p-4 grid grid-cols-2 sm:grid-cols-3 gap-3 shadow-micro">
             <div>
               <span className="text-[10px] font-bold text-muted uppercase tracking-wider block">
-                Total Kejadian Cacat
+                Total Kejadian
               </span>
               <span className="text-base font-extrabold text-ink">{defects.length} Insiden</span>
             </div>
             <div>
               <span className="text-[10px] font-bold text-muted uppercase tracking-wider block">
-                Total Uang Bocor (COPQ)
+                Total Biaya Rugi (COPQ)
               </span>
               <span className="text-base font-extrabold text-danger-text">{formatRupiah(totalCopqLoss)}</span>
             </div>
             <div className="col-span-2 sm:col-span-1">
               <span className="text-[10px] font-bold text-muted uppercase tracking-wider block">
-                Komponen Tercatat
+                Rata-rata Kerugian
               </span>
-              <span className="text-xs text-body font-medium">
-                Barang gagal total + Biaya pengerjaan ulang + Potongan komplain.
+              <span className="text-base font-extrabold text-ink">
+                {formatRupiah(defects.length ? Math.round(totalCopqLoss / defects.length) : 0)}
               </span>
             </div>
           </div>
@@ -369,12 +366,9 @@ export const QualityHalalModule: React.FC = () => {
                     A
                   </span>
                   <h3 className="font-extrabold text-sm text-ink uppercase tracking-wide">
-                    Level A: Audit Kesiapan Fasilitas & Titik Kritis Halal (Berkala Usaha)
+                    Level A: Kesiapan Fasilitas & Titik Kritis Halal
                   </h3>
                 </div>
-                <p className="text-xs text-muted mt-0.5">
-                  Standar regulasi pemerintah untuk fasilitas kerja, kebersihan (5R), dan kehalalan bahan/alat.
-                </p>
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
@@ -429,12 +423,9 @@ export const QualityHalalModule: React.FC = () => {
                     B
                   </span>
                   <h3 className="font-extrabold text-sm text-ink uppercase tracking-wide">
-                    Level B: Standar Pemeriksaan Mutu Rutin (SOP QC Produksi / Pengiriman)
+                    Level B: Standar Pemeriksaan Mutu Rutin (SOP QC)
                   </h3>
                 </div>
-                <p className="text-xs text-muted mt-0.5">
-                  Pengecekan fisik wajib pada setiap batch pengerjaan mebel atau masakan kuliner sebelum dikirim.
-                </p>
               </div>
 
               <div className="flex items-center gap-2 shrink-0">

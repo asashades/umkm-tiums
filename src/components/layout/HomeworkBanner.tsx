@@ -21,81 +21,108 @@ export const HomeworkBanner: React.FC = () => {
 
   return (
     <div className="bg-canvas border-b border-hairline px-3 sm:px-4 py-2.5">
-      <div className="max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        {/* Top Row: Badge + Title + Hide Button on Mobile */}
-        <div className="flex items-center justify-between gap-2 min-w-0">
-          <div className="flex items-center gap-1.5 min-w-0">
-            <span className="bg-badge-gold text-ink text-[9px] sm:text-[10px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-xs shrink-0">
-              Mode Pelatihan
+      <div className="max-w-4xl mx-auto space-y-2">
+        {/* Header Row: Title, Progress, and Hide Button */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="bg-badge-gold text-ink text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-xs shrink-0">
+              Tugas Pelatihan
             </span>
-            <div className="text-[11px] sm:text-xs text-ink font-bold truncate">
+            <span className="text-xs font-bold text-ink">
               {allCompleted ? (
-                <span className="text-primary flex items-center gap-1 truncate">
-                  <i className="fa-solid fa-circle-check text-xs shrink-0"></i>
-                  <span className="truncate">
-                    Tugas Selesai (3/3) <span className="hidden sm:inline">&bull; Siap Dibedah Sesi 5</span>
-                  </span>
+                <span className="text-primary flex items-center gap-1">
+                  <i className="fa-solid fa-circle-check text-xs"></i>
+                  <span>Lengkap (3/3)</span>
                 </span>
               ) : (
-                <span>Target Pelatihan: {completedCount}/3 Selesai</span>
+                <span>Progres: {completedCount} dari 3 Selesai</span>
               )}
-            </div>
+            </span>
           </div>
 
           <button
             type="button"
             onClick={toggleTrainingMode}
-            className="text-[11px] text-muted hover:text-ink font-semibold flex items-center gap-1 shrink-0 sm:hidden"
+            className="text-[11px] text-muted hover:text-ink font-semibold flex items-center gap-1 shrink-0"
+            title="Sembunyikan panel tugas"
           >
             <i className="fa-solid fa-eye-slash text-[10px]"></i>
-            <span>Tutup</span>
+            <span className="hidden sm:inline">Sembunyikan</span>
           </button>
         </div>
 
-        {/* Bottom Row: 3 Equal Target Pills + Desktop Hide Button */}
-        <div className="flex items-center gap-2">
-          <div className="grid grid-cols-3 gap-1.5 w-full sm:w-auto text-[11px]">
-            <button
-              type="button"
-              onClick={() => setActiveTab('hpp')}
-              className={`flex items-center justify-center gap-1 px-2 py-1 rounded-sm border whitespace-nowrap ${
-                task1Done ? 'bg-primary/5 text-primary border-primary/30 font-bold' : 'text-muted border-hairline'
-              }`}
-            >
-              <i className={task1Done ? 'fa-solid fa-check text-[9px]' : 'fa-regular fa-circle text-[9px]'}></i>
-              <span>Produk ({prodCount}/2)</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('orders')}
-              className={`flex items-center justify-center gap-1 px-2 py-1 rounded-sm border whitespace-nowrap ${
-                task2Done ? 'bg-primary/5 text-primary border-primary/30 font-bold' : 'text-muted border-hairline'
-              }`}
-            >
-              <i className={task2Done ? 'fa-solid fa-check text-[9px]' : 'fa-regular fa-circle text-[9px]'}></i>
-              <span>Order ({orderCount}/1)</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('quality')}
-              className={`flex items-center justify-center gap-1 px-2 py-1 rounded-sm border whitespace-nowrap ${
-                task3Done ? 'bg-primary/5 text-primary border-primary/30 font-bold' : 'text-muted border-hairline'
-              }`}
-            >
-              <i className={task3Done ? 'fa-solid fa-check text-[9px]' : 'fa-regular fa-circle text-[9px]'}></i>
-              <span>Cacat ({defectCount}/1)</span>
-            </button>
-          </div>
-
+        {/* 3 Clean Simplified Cards */}
+        <div className="grid grid-cols-3 gap-2 text-xs">
+          {/* Card 1: Produk */}
           <button
             type="button"
-            onClick={toggleTrainingMode}
-            className="hidden sm:flex text-[11px] text-muted hover:text-ink font-semibold items-center gap-1 pl-2 border-l border-hairline shrink-0"
+            onClick={() => setActiveTab('hpp')}
+            className={`p-2 rounded-sm border text-left transition-all ${
+              task1Done
+                ? 'bg-primary/5 border-primary/30 text-ink'
+                : 'bg-neutral-1/60 border-hairline hover:border-neutral-2 text-body'
+            }`}
           >
-            <i className="fa-solid fa-eye-slash text-[10px]"></i>
-            <span className="hidden md:inline">Sembunyikan</span>
+            <div className="flex items-center justify-between gap-1">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider text-muted">Tugas 1</span>
+              {task1Done ? (
+                <i className="fa-solid fa-circle-check text-primary text-xs"></i>
+              ) : (
+                <span className="text-[10px] font-bold text-muted">{prodCount}/2</span>
+              )}
+            </div>
+            <div className="font-bold text-xs text-ink truncate mt-0.5">2 Produk HPP</div>
+            <div className="text-[10px] text-muted truncate">
+              {task1Done ? 'Selesai' : `${prodCount} produk tersimpan`}
+            </div>
+          </button>
+
+          {/* Card 2: Pesanan */}
+          <button
+            type="button"
+            onClick={() => setActiveTab('orders')}
+            className={`p-2 rounded-sm border text-left transition-all ${
+              task2Done
+                ? 'bg-primary/5 border-primary/30 text-ink'
+                : 'bg-neutral-1/60 border-hairline hover:border-neutral-2 text-body'
+            }`}
+          >
+            <div className="flex items-center justify-between gap-1">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider text-muted">Tugas 2</span>
+              {task2Done ? (
+                <i className="fa-solid fa-circle-check text-primary text-xs"></i>
+              ) : (
+                <span className="text-[10px] font-bold text-muted">{orderCount}/1</span>
+              )}
+            </div>
+            <div className="font-bold text-xs text-ink truncate mt-0.5">1 Pesanan Masuk</div>
+            <div className="text-[10px] text-muted truncate">
+              {task2Done ? 'Selesai' : `${orderCount} pesanan tercatat`}
+            </div>
+          </button>
+
+          {/* Card 3: Cacat / QC */}
+          <button
+            type="button"
+            onClick={() => setActiveTab('quality')}
+            className={`p-2 rounded-sm border text-left transition-all ${
+              task3Done
+                ? 'bg-primary/5 border-primary/30 text-ink'
+                : 'bg-neutral-1/60 border-hairline hover:border-neutral-2 text-body'
+            }`}
+          >
+            <div className="flex items-center justify-between gap-1">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider text-muted">Tugas 3</span>
+              {task3Done ? (
+                <i className="fa-solid fa-circle-check text-primary text-xs"></i>
+              ) : (
+                <span className="text-[10px] font-bold text-muted">{defectCount}/1</span>
+              )}
+            </div>
+            <div className="font-bold text-xs text-ink truncate mt-0.5">1 Kasus Mutu/QC</div>
+            <div className="text-[10px] text-muted truncate">
+              {task3Done ? 'Selesai' : `${defectCount} cacat tercatat`}
+            </div>
           </button>
         </div>
       </div>

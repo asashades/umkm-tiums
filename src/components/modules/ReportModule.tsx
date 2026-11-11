@@ -75,9 +75,6 @@ export const ReportModule: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-xl md:text-2xl font-extrabold text-ink tracking-tight">Rapor Usaha & Analisis Pareto</h2>
-          <p className="text-xs text-muted mt-0.5">
-            Evaluasi omzet, arus kas vs piutang, potongan rugi cacat (COPQ), dan prioritas perbaikan 80/20.
-          </p>
         </div>
 
         {/* Period Selector */}
@@ -326,9 +323,6 @@ export const ReportModule: React.FC = () => {
                 Diagram Pareto Masalah Kualitas (Aturan 80/20)
               </h3>
             </div>
-            <p className="text-xs text-muted mt-0.5">
-              Mengurutkan jenis masalah cacat dari yang paling banyak menguras modal usaha Anda.
-            </p>
           </div>
 
           <div className="flex items-center gap-3 text-xs shrink-0 font-bold">

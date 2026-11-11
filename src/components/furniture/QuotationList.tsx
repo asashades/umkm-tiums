@@ -56,11 +56,8 @@ export const QuotationList: React.FC<QuotationListProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h3 className="text-base sm:text-lg font-extrabold text-ink tracking-tight">
-            Surat Penawaran Harga (Quotation) & Price Lock 14 Hari
+            Surat Penawaran Harga (Quotation)
           </h3>
-          <p className="text-xs text-muted mt-0.5">
-            Kunci modal HPP & margin sebelum negosiasi dengan calon pembeli, serta cegah rugi akibat kenaikan bahan baku mendadak.
-          </p>
         </div>
 
         <button

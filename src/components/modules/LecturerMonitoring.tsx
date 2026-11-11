@@ -228,7 +228,7 @@ export const LecturerMonitoring: React.FC = () => {
             Portal Monitoring Dosen
           </h3>
           <p className="text-xs text-muted">
-            Khusus Tim Pemateri (SNH, ASA, PSN). Masukkan PIN untuk membuka proyektor evaluasi tugas kelas.
+            Khusus Tim Dosen & Pengajar. Masukkan PIN untuk membuka evaluasi tugas kelas.
           </p>
         </div>
 
@@ -272,7 +272,7 @@ export const LecturerMonitoring: React.FC = () => {
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="bg-primary text-white text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider">
-              Portal Dosen &bull; Sesi 5 Jumat Pagi
+              Portal Dosen
             </span>
             {isCloudConnected ? (
               <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
@@ -284,16 +284,10 @@ export const LecturerMonitoring: React.FC = () => {
                 Mode Demo Lokal
               </span>
             )}
-            <span className="text-[11px] text-muted font-bold">
-              Pelatihan UMKM Kabupaten Jepara 2026 (SNH, ASA, PSN)
-            </span>
           </div>
           <h2 className="text-xl md:text-2xl font-black text-ink tracking-tight">
-            Dashboard Monitoring Kelas & Bedah Kasus HPP
+            Monitoring Kelas & Evaluasi HPP
           </h2>
-          <p className="text-xs text-muted">
-            Data live rekapitulasi tugas rumah, audit margin tekor, dan bahan Hot-Seat proyektor.
-          </p>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">

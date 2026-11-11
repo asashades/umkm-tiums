@@ -77,9 +77,6 @@ export const ProfileModule: React.FC = () => {
         <h2 className="text-xl md:text-2xl font-extrabold text-ink tracking-tight">
           Pengaturan Profil & Sektor Usaha
         </h2>
-        <p className="text-xs text-muted mt-0.5">
-          Atur identitas nota WhatsApp, pilih preset sektor produksi, dan kelola akun pengguna.
-        </p>
       </div>
 
       {/* Section 0: Akun & Status Langganan Cloud */}

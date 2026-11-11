@@ -201,9 +201,6 @@ export const HppModule: React.FC = () => {
               {currentSector.name}
             </span>
           </div>
-          <p className="text-xs text-muted mt-0.5">
-            Struktur modal akurat dengan cadangan risiko cacat (COPQ Buffer) bebas bocor biaya.
-          </p>
         </div>
 
         <button
@@ -311,31 +308,23 @@ export const HppModule: React.FC = () => {
 
                 {/* Closed-Loop Warning (If Actual COPQ Loss > Configured Defect Risk Buffer) */}
                 {isWarning && (
-                  <div className="bg-danger-subtle border border-danger-text/20 rounded-sm p-2.5 text-xs text-danger-text space-y-2">
-                    <div className="flex items-start gap-2">
-                      <i className="fa-solid fa-triangle-exclamation text-sm shrink-0 mt-0.5"></i>
-                      <div className="leading-snug">
-                        <span className="font-bold">
-                          Realisasi Cacat ({warningInfo.actualDefectRatio}%) &gt; Cadangan ({warningInfo.configuredBuffer}%).
-                        </span>{' '}
-                        Total rugi cacat: {formatRupiah(warningInfo.totalProductCopqLoss)}. Margin berisiko tekor.
-                      </div>
+                  <div className="bg-danger-subtle border border-danger-text/20 rounded-sm p-2 text-xs text-danger-text flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5">
+                      <i className="fa-solid fa-triangle-exclamation text-xs shrink-0"></i>
+                      <span>
+                        Cacat ({warningInfo.actualDefectRatio}%) &gt; Cadangan ({warningInfo.configuredBuffer}%). Rugi: {formatRupiah(warningInfo.totalProductCopqLoss)}.
+                      </span>
                     </div>
-                    <div className="flex justify-end">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          updateProduct(product.id, { defectRiskPercent: warningInfo.recommendedBuffer });
-                          showNotice(
-                            `Cadangan risiko "${product.name}" disesuaikan menjadi ${warningInfo.recommendedBuffer}% untuk mengamankan HPP.`
-                          );
-                        }}
-                        className="px-2.5 py-1 bg-canvas text-danger-text border border-danger-text/30 hover:bg-danger-text hover:text-white rounded-full text-[11px] font-bold transition-colors flex items-center gap-1"
-                      >
-                        <i className="fa-solid fa-shield-halved text-[10px]"></i>
-                        <span>Sesuaikan Cadangan ke {warningInfo.recommendedBuffer}%</span>
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        updateProduct(product.id, { defectRiskPercent: warningInfo.recommendedBuffer });
+                        showNotice(`Cadangan risiko disesuaikan ke ${warningInfo.recommendedBuffer}%.`);
+                      }}
+                      className="px-2.5 py-0.5 bg-canvas text-danger-text border border-danger-text/30 hover:bg-danger-text hover:text-white rounded-full text-[10px] font-bold shrink-0 self-end sm:self-center"
+                    >
+                      Sesuaikan ke {warningInfo.recommendedBuffer}%
+                    </button>
                   </div>
                 )}
 
@@ -368,26 +357,21 @@ export const HppModule: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Insight Kelas Produk & Rekomendasi Bisnis */}
-                <div className="bg-canvas p-2.5 rounded-sm border border-hairline text-xs space-y-1">
-                  <div className="flex items-center justify-between gap-1 text-[11px]">
-                    <span className="font-extrabold text-ink flex items-center gap-1.5 truncate">
-                      <i className={`${cardInsight.icon} text-[10px] text-primary shrink-0`}></i>
-                      <span className="truncate">{cardInsight.tierName}</span>
-                    </span>
-                    <span className={`text-[9px] px-2 py-0.5 rounded-full shrink-0 ${cardInsight.badgeClass}`}>
-                      {cardInsight.badgeLabel}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-muted leading-relaxed">
-                    {cardInsight.insightText}
-                  </p>
+                {/* Status Margin & Insight Ringkas */}
+                <div className="flex items-center justify-between text-xs pt-1 border-t border-hairline">
+                  <span className="text-[11px] font-bold text-ink flex items-center gap-1.5 truncate">
+                    <i className={`${cardInsight.icon} text-[10px] text-primary shrink-0`}></i>
+                    <span className="truncate">{cardInsight.tierName}</span>
+                  </span>
+                  <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full shrink-0 ${cardInsight.badgeClass}`}>
+                    {cardInsight.badgeLabel}
+                  </span>
                 </div>
 
                 {/* Component Breakdown List */}
-                <div className="text-[11px] text-body pt-1 flex flex-wrap gap-x-4 gap-y-1 border-t border-hairline">
+                <div className="text-[11px] text-body pt-1 flex flex-wrap gap-x-4 gap-y-1 border-t border-hairline/60">
                   <span>
-                    <strong className="text-ink">Upah Kerja:</strong> {formatRupiah(product.laborCost)}
+                    <strong className="text-ink">Upah:</strong> {formatRupiah(product.laborCost)}
                   </span>
                   <span>
                     <strong className="text-ink">Overhead:</strong> {formatRupiah(product.overheadCost)}

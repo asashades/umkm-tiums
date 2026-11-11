@@ -1,0 +1,153 @@
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #2F3185;
+  --color-primary-hover: #25276B;
+  --color-on-primary: #FFFFFF;
+  --color-canvas: #FFFFFF;
+  --color-neutral-1: #F1F5F9;
+  --color-neutral-2: #CBD5E1;
+  --color-hairline: #E2E8F0;
+  --color-ink: #0F1923;
+  --color-body: #334155;
+  --color-muted: #8896A7;
+  --color-badge-gold: #FFB800;
+  --color-border-teal: #1CBDB3;
+  --color-accent-dark: #1E293B;
+  --color-danger-subtle: #FEF2F2;
+  --color-danger-text: #991B1B;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  overflow-x: hidden;
+  background-color: #F1F5F9;
+  color: #334155;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background-color: #F1F5F9;
+  color: #334155;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Allow text selection only in input fields and enforce 16px font to prevent iOS Safari auto-zoom */
+input, select, textarea {
+  user-select: text;
+  -webkit-user-select: text;
+  font-size: 16px !important;
+}
+
+/* Clean scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #8896A7;
+}
+
+/* Custom interactive transitions */
+.transition-pill {
+  transition: all 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================================================
+   375px SMARTPHONE SIMULATOR (.hp-viewport) RESPONSIVE OVERRIDES
+   Ensures that when viewing the 375px phone frame on a desktop monitor,
+   all Tailwind sm:/md:/lg: rules revert to true mobile single-column layout
+   and fixed modals remain confined inside the 375px phone screen.
+   ============================================================================ */
+.hp-viewport {
+  container-type: inline-size;
+}
+
+.hp-viewport .sm\:flex-row,
+.hp-viewport .md\:flex-row {
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+
+.hp-viewport .sm\:items-center,
+.hp-viewport .md\:items-center {
+  align-items: stretch !important;
+}
+
+.hp-viewport .hidden.sm\:inline,
+.hp-viewport .hidden.md\:inline,
+.hp-viewport .hidden.sm\:flex {
+  display: none !important;
+}
+
+.hp-viewport .sm\:hidden,
+.hp-viewport .md\:hidden {
+  display: inline !important;
+}
+
+.hp-viewport .grid-cols-1.sm\:grid-cols-2,
+.hp-viewport .grid-cols-1.sm\:grid-cols-3,
+.hp-viewport .grid-cols-1.sm\:grid-cols-4,
+.hp-viewport .grid-cols-1.md\:grid-cols-2,
+.hp-viewport .grid-cols-1.lg\:grid-cols-4 {
+  grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+}
+
+.hp-viewport .grid-cols-2.sm\:grid-cols-3,
+.hp-viewport .grid-cols-2.sm\:grid-cols-4,
+.hp-viewport .grid-cols-2.lg\:grid-cols-4 {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+.hp-viewport .col-span-2.sm\:col-span-1 {
+  grid-column: span 2 / span 2 !important;
+}
+
+.hp-viewport .sm\:col-span-2 {
+  grid-column: span 1 / span 1 !important;
+}
+
+.hp-viewport .col-span-12.sm\:col-span-6,
+.hp-viewport .col-span-12.sm\:col-span-4,
+.hp-viewport .col-span-12.sm\:col-span-1 {
+  grid-column: span 12 / span 12 !important;
+}
+
+.hp-viewport .col-span-6.sm\:col-span-3 {
+  grid-column: span 6 / span 6 !important;
+}
+
+.hp-viewport .col-span-4.sm\:col-span-2,
+.hp-viewport .col-span-4.sm\:col-span-3 {
+  grid-column: span 4 / span 4 !important;
+}
+
+.hp-viewport .col-span-2.sm\:col-span-1 {
+  grid-column: span 2 / span 2 !important;
+}
+
+.hp-viewport .w-full.sm\:w-auto {
+  width: 100% !important;
+}
+
+.hp-viewport .text-xl.md\:text-2xl,
+.hp-viewport .text-lg.sm\:text-2xl {
+  font-size: 1.125rem !important;
+  line-height: 1.5rem !important;
+}

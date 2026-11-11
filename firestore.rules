@@ -1,0 +1,313 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {userId} (Firebase Auth UID)
+    // Fields:
+    //   - uid: string (required, 1-128 chars, immutable, matches userId)
+    //   - email: string (required, valid email, 1-200 chars)
+    //   - displayName: string (optional, <= 120 chars)
+    //   - photoURL: string (optional, URL/URI, <= 500 chars)
+    //   - phone: string (optional, <= 40 chars)
+    //   - businessName: string (optional, <= 120 chars)
+    //   - ownerName: string (optional, <= 120 chars)
+    //   - phoneWhatsApp: string (optional, <= 40 chars)
+    //   - city: string (optional, <= 120 chars)
+    //   - sector: string (optional, enum: 'mebel' | 'fnb' | 'fashion' | 'custom')
+    //   - sectorLabel: string (optional, <= 120 chars)
+    //   - role: string (required, enum: 'superadmin' | 'admin' | 'user' | 'guest')
+    //   - status: string (required, enum: 'active' | 'trial' | 'inactive')
+    //   - statusReason: string (optional, <= 250 chars)
+    //   - onboardingCompleted: bool (optional)
+    //   - createdAt: string (optional, ISO 8601 format, immutable)
+    //   - serverCreatedAt: timestamp (optional)
+    //   - lastLoginAt: string (optional)
+    //   - serverLastLoginAt: timestamp (optional)
+    //   - updatedAt: string (optional)
+    //   - trainingSessionId: string (optional, <= 120 chars)
+    //   - isTrainingParticipant: bool (optional)
+    //
+    // Collection: workspaces
+    // Document ID: {userId} (Firebase Auth UID)
+    // Fields:
+    //   - profile: map (business profile and metadata)
+    //   - products: list (max 500 items, product catalog and unit cost calculation)
+    //   - orders: list (max 500 items, production orders & payment terms)
+    //   - defects: list (max 500 items, COPQ quality control logs)
+    //   - checklists: list (max 500 items, workshop operation checklists)
+    //   - quotations: list (max 500 items, formal customer quotations)
+    //   - craftsmen: list (max 500 items, artisan master registry)
+    //   - laborContracts: list (max 500 items, piece-rate labor contracts / SPK Borongan)
+    //   - laborPayments: list (max 500 items, craftsman cash advances / kasbon)
+    //   - updatedAt: string (optional)
+    //   - serverUpdatedAt: timestamp (optional)
+    //
+    // Collection: training_participants
+    // Document ID: {participantId} (Participant UID / Cohort Participant ID)
+    // Fields:
+    //   - id: string (optional, <= 120 chars)
+    //   - businessName: string (optional, <= 120 chars)
+    //   - ownerName: string (optional, <= 120 chars)
+    //   - participantName: string (optional, <= 120 chars)
+    //   - phone: string (optional, <= 40 chars)
+    //   - sector: string (optional, <= 40 chars)
+    //   - stage: number (optional, integer/float stage progress 1-4)
+    //   - stageLabel: string (optional, <= 120 chars)
+    //   - productCount: number (optional)
+    //   - orderCount: number (optional)
+    //   - contractCount: number (optional)
+    //   - defectCount: number (optional)
+    //   - qcPassedCount: number (optional)
+    //   - totalRevenue: number (optional)
+    //   - totalHppCalculated: number (optional)
+    //   - actualCopqRate: number (optional)
+    //   - completedHomework: bool (optional)
+    //   - needsAssistance: bool (optional)
+    //   - assistanceMessage: string (optional, <= 300 chars)
+    //   - lastActiveAt: string (optional)
+    //   - serverUpdatedAt: timestamp (optional)
+    //
+    // Collection: audit_logs
+    // Document ID: {logId} (auto-generated)
+    // Fields:
+    //   - actorUid: string (required, <= 128 chars)
+    //   - actorEmail: string (required, <= 200 chars)
+    //   - actorRole: string (optional, <= 50 chars)
+    //   - action: string (required, <= 50 chars)
+    //   - targetUid: string (required, <= 128 chars)
+    //   - targetEmail: string (required, <= 200 chars)
+    //   - previousValue: string (optional, <= 200 chars)
+    //   - newValue: string (optional, <= 200 chars)
+    //   - notes: string (optional, <= 500 chars)
+    //   - timestamp: string (optional, <= 50 chars)
+    //   - serverTimestamp: timestamp (optional)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    // Check if the request is from an authenticated user
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Check if user owns the document path
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Check if authenticated user is the designated Superadmin (asa482@ums.ac.id)
+    function isSuperAdmin() {
+      return isAuthenticated() && request.auth.token.email == 'asa482@ums.ac.id';
+    }
+
+    // Check if authenticated user has Admin privileges (Superadmin or role 'admin' in Firestore)
+    function isAdmin() {
+      return isSuperAdmin() || (
+        isAuthenticated() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+    }
+
+    // Check if workspace owner account is not marked 'inactive'
+    function isWorkspaceOwnerActive(userId) {
+      return isOwner(userId) && (
+        !exists(/databases/$(database)/documents/users/$(request.auth.uid)) ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status != 'inactive'
+      );
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidUser(data) {
+      let allowedFields = [
+        'uid', 'email', 'displayName', 'photoURL', 'phone',
+        'businessName', 'ownerName', 'phoneWhatsApp', 'city',
+        'sector', 'sectorLabel', 'role', 'status', 'statusReason',
+        'onboardingCompleted', 'createdAt', 'serverCreatedAt',
+        'lastLoginAt', 'serverLastLoginAt', 'updatedAt',
+        'trainingSessionId', 'isTrainingParticipant',
+        'trialEndsAt', 'paidUntil', 'plan', 'paymentNote',
+        'statusNote', 'statusUpdatedBy', 'statusUpdatedAt'
+      ];
+      return data.keys().hasOnly(allowedFields) &&
+        data.keys().hasAll(['uid', 'email', 'role', 'status']) &&
+        data.uid is string && data.uid.size() > 0 && data.uid.size() <= 128 &&
+        data.email is string && data.email.size() > 0 && data.email.size() <= 200 &&
+        data.role in ['superadmin', 'admin', 'user', 'guest'] &&
+        data.status in ['active', 'trial', 'inactive'] &&
+        (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 120)) &&
+        (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() <= 500)) &&
+        (!('phone' in data) || (data.phone is string && data.phone.size() <= 40)) &&
+        (!('businessName' in data) || (data.businessName is string && data.businessName.size() <= 120)) &&
+        (!('ownerName' in data) || (data.ownerName is string && data.ownerName.size() <= 120)) &&
+        (!('phoneWhatsApp' in data) || (data.phoneWhatsApp is string && data.phoneWhatsApp.size() <= 40)) &&
+        (!('city' in data) || (data.city is string && data.city.size() <= 120)) &&
+        (!('sector' in data) || (data.sector is string && data.sector in ['mebel', 'fnb', 'fashion', 'custom'])) &&
+        (!('sectorLabel' in data) || (data.sectorLabel is string && data.sectorLabel.size() <= 120)) &&
+        (!('statusReason' in data) || (data.statusReason is string && data.statusReason.size() <= 250)) &&
+        (!('onboardingCompleted' in data) || data.onboardingCompleted is bool) &&
+        (!('isTrainingParticipant' in data) || data.isTrainingParticipant is bool) &&
+        (!('trainingSessionId' in data) || (data.trainingSessionId is string && data.trainingSessionId.size() <= 120));
+    }
+
+    function isValidWorkspace(data) {
+      return (!('profile' in data) || data.profile is map) &&
+        (!('products' in data) || (data.products is list && data.products.size() <= 500)) &&
+        (!('orders' in data) || (data.orders is list && data.orders.size() <= 500)) &&
+        (!('defects' in data) || (data.defects is list && data.defects.size() <= 500)) &&
+        (!('checklists' in data) || (data.checklists is list && data.checklists.size() <= 500)) &&
+        (!('quotations' in data) || (data.quotations is list && data.quotations.size() <= 500)) &&
+        (!('craftsmen' in data) || (data.craftsmen is list && data.craftsmen.size() <= 500)) &&
+        (!('laborContracts' in data) || (data.laborContracts is list && data.laborContracts.size() <= 500)) &&
+        (!('laborPayments' in data) || (data.laborPayments is list && data.laborPayments.size() <= 500));
+    }
+
+    function isValidTrainingParticipant(data) {
+      return (!('businessName' in data) || (data.businessName is string && data.businessName.size() <= 120)) &&
+        (!('ownerName' in data) || (data.ownerName is string && data.ownerName.size() <= 120)) &&
+        (!('participantName' in data) || (data.participantName is string && data.participantName.size() <= 120)) &&
+        (!('phone' in data) || (data.phone is string && data.phone.size() <= 40)) &&
+        (!('sector' in data) || (data.sector is string && data.sector.size() <= 40)) &&
+        (!('stage' in data) || (data.stage is int || data.stage is float)) &&
+        (!('productCount' in data) || (data.productCount is int || data.productCount is float)) &&
+        (!('orderCount' in data) || (data.orderCount is int || data.orderCount is float)) &&
+        (!('defectCount' in data) || (data.defectCount is int || data.defectCount is float)) &&
+        (!('contractCount' in data) || (data.contractCount is int || data.contractCount is float)) &&
+        (!('qcPassedCount' in data) || (data.qcPassedCount is int || data.qcPassedCount is float)) &&
+        (!('totalRevenue' in data) || (data.totalRevenue is int || data.totalRevenue is float)) &&
+        (!('totalHppCalculated' in data) || (data.totalHppCalculated is int || data.totalHppCalculated is float)) &&
+        (!('actualCopqRate' in data) || (data.actualCopqRate is int || data.actualCopqRate is float)) &&
+        (!('completedHomework' in data) || data.completedHomework is bool) &&
+        (!('needsAssistance' in data) || data.needsAssistance is bool) &&
+        (!('assistanceMessage' in data) || (data.assistanceMessage is string && data.assistanceMessage.size() <= 300));
+    }
+
+    function isValidAuditLog(data) {
+      return data.keys().hasAll(['actorUid', 'actorEmail', 'action', 'targetUid', 'targetEmail']) &&
+        data.actorUid is string && data.actorUid.size() <= 128 &&
+        data.actorEmail is string && data.actorEmail.size() <= 200 &&
+        data.action is string && data.action.size() <= 50 &&
+        data.targetUid is string && data.targetUid.size() <= 128 &&
+        data.targetEmail is string && data.targetEmail.size() <= 200 &&
+        (!('actorRole' in data) || (data.actorRole is string && data.actorRole.size() <= 50)) &&
+        (!('previousValue' in data) || (data.previousValue is string && data.previousValue.size() <= 200)) &&
+        (!('newValue' in data) || (data.newValue is string && data.newValue.size() <= 200)) &&
+        (!('notes' in data) || (data.notes is string && data.notes.size() <= 500)) &&
+        (!('timestamp' in data) || (data.timestamp is string && data.timestamp.size() <= 50));
+    }
+
+    // ===============================================================
+    // Collection Rules
+    // ===============================================================
+
+    // 1. Users collection: user profiles & account metadata
+    match /users/{userId} {
+      // Users can read their own profile; Admins / Superadmin can read all users (Admin Console)
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+
+      // User can create their own document on first sign-in.
+      // Superadmin gets role 'superadmin'; all other users must get role 'user'.
+      allow create: if isAuthenticated() &&
+        request.auth.uid == userId &&
+        isValidUser(request.resource.data) &&
+        request.resource.data.uid == userId &&
+        request.resource.data.role == (isSuperAdmin() ? 'superadmin' : 'user');
+
+      // Profile updates with strict authorization & RBAC immutability
+      allow update: if isAuthenticated() &&
+        isValidUser(request.resource.data) &&
+        request.resource.data.uid == resource.data.uid &&
+        (!('createdAt' in resource.data) || request.resource.data.createdAt == resource.data.createdAt) &&
+        (
+          // Case 1: Superadmin can update any user; cannot demote superadmin account from 'superadmin' role
+          (
+            isSuperAdmin() &&
+            (resource.data.email != 'asa482@ums.ac.id' || request.resource.data.role == 'superadmin')
+          ) ||
+          // Case 2: Admin can update regular users (e.g. status), cannot modify superadmin user, and cannot change roles
+          (
+            isAdmin() &&
+            resource.data.role != 'superadmin' &&
+            resource.data.email != 'asa482@ums.ac.id' &&
+            request.resource.data.role == resource.data.role
+          ) ||
+          // Case 3: Regular Owner can update profile fields, but CANNOT change role or status
+          (
+            request.auth.uid == userId &&
+            request.resource.data.role == resource.data.role &&
+            request.resource.data.status == resource.data.status &&
+            request.resource.data.email == resource.data.email
+          )
+        );
+
+      // Only Superadmin can delete user profiles; Superadmin account cannot delete itself
+      allow delete: if isSuperAdmin() && resource.data.email != 'asa482@ums.ac.id';
+    }
+
+    // 2. Workspaces collection: user workspace calculations, products, orders, SPK & kasbon
+    match /workspaces/{userId} {
+      // Owner or Admins can read workspace data (for monitoring / audit)
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+
+      // Write allowed for active owner (status != 'inactive') or Superadmin
+      allow create, update: if isAuthenticated() &&
+        isValidWorkspace(request.resource.data) &&
+        (isSuperAdmin() || isWorkspaceOwnerActive(userId));
+
+      // Delete allowed for Superadmin or the workspace owner
+      allow delete: if isSuperAdmin() || (isAuthenticated() && request.auth.uid == userId);
+
+      // Subcollections within workspace (if any) inherit the same security policy
+      match /{subcollection=**} {
+        allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+        allow create, update: if isAuthenticated() && (isSuperAdmin() || isWorkspaceOwnerActive(userId));
+        allow delete: if isSuperAdmin() || (isAuthenticated() && request.auth.uid == userId);
+      }
+    }
+
+    // 3. Training Participants collection: live classroom training & progress dashboard
+    match /training_participants/{participantId} {
+      // Open read for classroom live projector display and lecturer monitoring portal
+      allow read: if true;
+
+      // Participant can update their own progress; Admins can seed and manage all participant entries
+      allow create, update: if isAuthenticated() &&
+        isValidTrainingParticipant(request.resource.data) &&
+        (request.auth.uid == participantId || isAdmin());
+
+      // Only Admins can delete or reset training participants
+      allow delete: if isAdmin();
+    }
+
+    // 4. Audit Logs collection: centralized append-only security & administrative event trail
+    match /audit_logs/{logId} {
+      // Read restricted exclusively to Admins and Superadmins
+      allow read: if isAdmin();
+
+      // Any authenticated user can record audit events (registration, status changes, admin actions)
+      allow create: if isAuthenticated() && isValidAuditLog(request.resource.data);
+
+      // Strictly append-only: modifications and deletions are permanently prohibited
+      allow update, delete: if false;
+    }
+
+    // ===============================================================
+    // Default Deny Rule
+    // ===============================================================
+    // All other collections or paths not explicitly allowed above are denied
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
